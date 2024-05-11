@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # User-defined Parameters
-USER="bennet.kampe"
-SERVER="141.89.225.148"
+USER="firstname.lastname"
+SERVER="141.89.225.148" # CHANGE THIS TO 146 IF YOU'RE NOT A STUDENT
 PORT="9999"
-DEFAULT_SERVICE_NAME="USB 10/100/1000 LAN"  # Default network service name
+DEFAULT_SERVICE_NAME="USB 10/100/1000 LAN"  # Default network service name (Change this if needed)
 SERVICE_NAME="${1:-$DEFAULT_SERVICE_NAME}"  # Use the provided argument, or default if none
 
 # Function to enable the SOCKS proxy
@@ -23,7 +23,7 @@ disable_proxy() {
 trap "disable_proxy" SIGINT SIGTERM EXIT
 
 # Retrieve the password from Mac Keychain
-PASSWORD=$(security find-generic-password -a $USER -s hpi-socks -w)
+PASSWORD=$(security find-generic-password -a $USER -s hpi-socks -w) # Change hpi-socks to a keychain entry containing your HPI-password
 
 if [ -z "$PASSWORD" ]; then
     echo "Failed to retrieve password from Keychain"
