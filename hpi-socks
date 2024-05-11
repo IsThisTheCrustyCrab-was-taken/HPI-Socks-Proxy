@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# User-defined Parameters
+USER="bennet.kampe"
+SERVER="141.89.225.148"
+PORT="9999"
+DEFAULT_SERVICE_NAME="USB 10/100/1000 LAN"  # Default network service name
+SERVICE_NAME="${1:-$DEFAULT_SERVICE_NAME}"  # Use the provided argument, or default if none
+
+# Function to enable the SOCKS proxy
+enable_proxy() {
+    echo "Enabling SOCKS proxy on $SERVICE_NAME..."
+    sudo networksetup -setsocksfirewallproxystate "$SERVICE_NAME" on
+}
+
+# Function to disable the SOCKS proxy
+disable_proxy() {
+    echo "Disabling SOCKS proxy on $SERVICE_NAME..."
+    sudo networksetup -setsocksfirewallproxystate "$SERVICE_NAME" off
+}
+
+# Trap signals: SIGINT (Ctrl-C), SIGTERM, and exit
+trap "disable_proxy" SIGINT SIGTERM EXIT
+
+# Retrieve the password from Mac Keychain
+PASSWORD=$(security find-generic-password -a $USER -s hpi-socks -w)
+
+if [ -z "$PASSWORD" ]; then
+    echo "Failed to retrieve password from Keychain"
+    exit 1
+fi
+
+# Enable the SOCKS proxy
+enable_proxy
+
+# Connect to the server using sshpass and SSH SOCKS proxy
+sshpass -p "$PASSWORD" ssh -ND $PORT $USER@$SERVER &
+SSH_PID=$!
+
+# Wait indefinitely until the SSH connection is manually terminated
+wait $SSH_PID
+
+# Disable the SOCKS proxy after SSH session ends
+disable_proxy
