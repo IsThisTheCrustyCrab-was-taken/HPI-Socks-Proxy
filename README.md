@@ -13,7 +13,7 @@ A script to easily enable a socks proxy to HPI on MacOS and setup instructions
 ### 2. Keychain
 
 1. Open keychain acess
-2. Either change hpi-socks to your keychain entry containing your password or add a new keychain entry named hpi-socks and your HPI-password
+2. Either edit the script to change hpi-socks to your keychain entry containing your password or add a new keychain entry named hpi-socks containing your HPI-password
 
 ### 3. (Optional) Change your default interface
 
